@@ -1,0 +1,45 @@
+{
+  "name": "neural-car",
+  "version": "1.0.0",
+  "private": true,
+  "nx": {
+    "projectType": "application",
+    "sourceRoot": "src",
+    "targets": {
+      "build": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "tsc -w"
+        }
+      },
+      "copy": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "chokidar 'src/**/*.{html,css}' -c 'copyfiles -u 1 {path} dist'"
+        }
+      },
+      "live": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "live-server dist"
+        }
+      },
+      "serve": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "concurrently \"nx run neural-car:build\" \"nx run neural-car:copy\" \"nx run neural-car:live\""
+        }
+      }
+    }
+  },
+  "devDependencies": {
+    "chokidar-cli": "^3.0.0",
+    "concurrently": "^9.2.1",
+    "copyfiles": "^2.4.1",
+    "live-server": "^1.2.2",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "nx": "^22.2.3"
+  }
+}
