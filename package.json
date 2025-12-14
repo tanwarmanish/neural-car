@@ -15,7 +15,14 @@
       "copy": {
         "executor": "nx:run-commands",
         "options": {
-          "command": "chokidar 'src/**/*.{html,css}' -c 'copyfiles -u 1 {path} dist'"
+          "command": "chokidar \"src/**/*.html\" -c \"copyfiles -u 1 src/**/*.html dist\""
+        }
+      },
+      "sass": {
+        "cache": false,
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "sass --watch src/styles:dist/styles"
         }
       },
       "live": {
@@ -27,7 +34,7 @@
       "serve": {
         "executor": "nx:run-commands",
         "options": {
-          "command": "concurrently \"nx run neural-car:build\" \"nx run neural-car:copy\" \"nx run neural-car:live\""
+          "command": "concurrently \"nx run sass\" \"nx build\" \"nx copy\"  \"nx live\""
         }
       }
     }
@@ -37,6 +44,7 @@
     "concurrently": "^9.2.1",
     "copyfiles": "^2.4.1",
     "live-server": "^1.2.2",
+    "sass": "^1.96.0",
     "typescript": "^5.9.3"
   },
   "dependencies": {
