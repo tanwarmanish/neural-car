@@ -7,9 +7,10 @@ export class Car {
   width: number;
   height: number;
   controls: any;
+  angle: number = 0;
 
   speed: number = 0;
-  readonly accleration = 0.25;
+  readonly accleration = 0.2;
   readonly friction = 0.05;
   readonly maxSpeed = 3;
 
@@ -22,22 +23,21 @@ export class Car {
   }
 
   draw(ctx: CanvasRenderingContext2D) {
+    ctx.save();
+    ctx.translate(this.x, this.y);
+    ctx.rotate(-this.angle);
     ctx.beginPath();
-    ctx.rect(
-      this.x - this.width / 2,
-      this.y - this.height / 2,
-      this.width,
-      this.height
-    );
+    ctx.rect(-this.width / 2, -this.height / 2, this.width, this.height);
     ctx.fill();
+    ctx.restore();
   }
 
   update() {
-    const direction = this.controls.direction;
-    this.verticalMovement(direction);
+    this.#move();
   }
 
-  verticalMovement(direction: any) {
+  #move() {
+    const direction = this.controls.direction;
     if (direction[GO.Forward]) this.speed += this.accleration;
     if (direction[GO.Reverse]) this.speed -= this.accleration;
     this.speed = Math.min(this.speed, this.maxSpeed);
@@ -45,6 +45,13 @@ export class Car {
     if (this.speed > 0) this.speed -= this.friction;
     if (this.speed < 0) this.speed += this.friction;
     if (Math.abs(this.speed) <= this.friction) this.speed = 0;
-    this.y += this.speed;
+    if (this.speed != 0) {
+      const flip = this.speed > 0 ? 1 : -1;
+      if (direction[GO.Left]) this.angle += 0.03 * flip;
+      if (direction[GO.Right]) this.angle -= 0.03 * flip;
+      console.log(this.speed, this.y);
+    }
+    this.x -= Math.sin(this.angle) * this.speed;
+    this.y -= Math.cos(this.angle) * this.speed;
   }
 }
