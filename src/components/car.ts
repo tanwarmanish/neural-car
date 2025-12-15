@@ -49,7 +49,6 @@ export class Car {
       const flip = this.speed > 0 ? 1 : -1;
       if (direction[GO.Left]) this.angle += 0.03 * flip;
       if (direction[GO.Right]) this.angle -= 0.03 * flip;
-      console.log(this.speed, this.y);
     }
     this.x -= Math.sin(this.angle) * this.speed;
     this.y -= Math.cos(this.angle) * this.speed;

@@ -1,35 +1,64 @@
 import { Car } from "./components/car.js";
+import { Road } from "./components/road.js";
+
+let global: {
+  context: CanvasRenderingContext2D | null;
+  canvas: HTMLCanvasElement | null;
+  road: Road | null;
+  car: Car | null;
+} = {
+  context: null,
+  canvas: null,
+  road: null,
+  car: null,
+};
 
 main();
 
 function main() {
-  const { canvas, context } = getContext(400);
-  if (!context) return;
-  const car = initCar(context);
-  animate(car, canvas, context);
+  initCanvas(400);
+  if (!global.context) return;
+  initRoad();
+  initCar();
+  animate();
 }
 
-function getContext(width = 400) {
+function initCanvas(width = 400) {
   const canvas = document.querySelector("#myCanvas") as HTMLCanvasElement;
+  if (!canvas) return;
   canvas.height = window.innerHeight;
   canvas.width = 400;
   const context = canvas.getContext("2d");
-  return { canvas, context };
+  if (!context) return;
+  global["context"] = context;
+  global["canvas"] = canvas;
 }
 
-function initCar(context: CanvasRenderingContext2D) {
-  const car = new Car(100, 100, 50, 80);
+function initCar() {
+  const { context, road } = global;
+  if (!context || !road) return;
+  const car = new Car(road.getLaneCenter(1), 100, 50, 80);
   car.draw(context);
-  return car;
+  global["car"] = car;
 }
 
-function animate(
-  car: Car,
-  canvas: HTMLCanvasElement,
-  context: CanvasRenderingContext2D
-) {
+function initRoad() {
+  const { canvas, context } = global;
+  if (!context || !canvas) return;
+  const road = new Road(canvas.width / 2, canvas.width * 0.9, 3);
+  road.draw(context);
+  global["road"] = road;
+}
+
+function animate() {
+  const { canvas, context, road, car } = global;
+  if (!canvas || !context || !road || !car) {
+    console.log(car);
+    return;
+  };
   canvas.height = window.innerHeight;
+  road.draw(context);
   car.update();
   car.draw(context);
-  requestAnimationFrame(() => animate(car, canvas, context));
+  requestAnimationFrame(animate);
 }
