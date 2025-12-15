@@ -1,5 +1,6 @@
 import { GO } from "../types/key.enum.js";
 import { Controls } from "./controls.js";
+import { Sensor } from "./sensor.js";
 
 export class Car {
   x: number;
@@ -8,6 +9,7 @@ export class Car {
   height: number;
   controls: any;
   angle: number = 0;
+  sensor:any;
 
   speed: number = 0;
   readonly accleration = 0.2;
@@ -19,6 +21,7 @@ export class Car {
     this.y = y;
     this.width = w;
     this.height = h;
+    this.sensor = new Sensor(this);
     this.controls = new Controls();
   }
 
@@ -30,10 +33,13 @@ export class Car {
     ctx.rect(-this.width / 2, -this.height / 2, this.width, this.height);
     ctx.fill();
     ctx.restore();
+
+    this.sensor.draw(ctx);
   }
 
   update() {
     this.#move();
+    this.sensor.update();
   }
 
   #move() {
