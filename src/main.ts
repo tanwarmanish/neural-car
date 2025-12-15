@@ -60,7 +60,7 @@ function animate() {
 
   road.draw(context);
   car.draw(context);
-  car.update();
+  car.update(road.borders);
 
   context.restore();
 

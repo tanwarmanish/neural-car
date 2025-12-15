@@ -9,7 +9,7 @@ export class Car {
   height: number;
   controls: any;
   angle: number = 0;
-  sensor:any;
+  sensor: any;
 
   speed: number = 0;
   readonly accleration = 0.2;
@@ -37,9 +37,9 @@ export class Car {
     this.sensor.draw(ctx);
   }
 
-  update() {
+  update(roadBorders: number[]) {
     this.#move();
-    this.sensor.update();
+    this.sensor.update(roadBorders);
   }
 
   #move() {
