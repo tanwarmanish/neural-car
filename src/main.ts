@@ -52,13 +52,17 @@ function initRoad() {
 
 function animate() {
   const { canvas, context, road, car } = global;
-  if (!canvas || !context || !road || !car) {
-    console.log(car);
-    return;
-  };
+  if (!canvas || !context || !road || !car) return;
   canvas.height = window.innerHeight;
+
+  context.save();
+  context.translate(0, -car.y + canvas.height * 0.7);
+
   road.draw(context);
-  car.update();
   car.draw(context);
+  car.update();
+
+  context.restore();
+
   requestAnimationFrame(animate);
 }
