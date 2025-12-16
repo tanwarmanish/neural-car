@@ -13,6 +13,8 @@ let global: {
   car: null,
 };
 
+const traffic: Car[] = [];
+
 main();
 
 function main() {
@@ -20,6 +22,7 @@ function main() {
   if (!global.context) return;
   initRoad();
   initCar();
+  initTraffic(1);
   animate();
 }
 
@@ -37,7 +40,7 @@ function initCanvas(width = 400) {
 function initCar() {
   const { context, road } = global;
   if (!context || !road) return;
-  const car = new Car(road.getLaneCenter(1), 100, 50, 80);
+  const car = new Car(road.getLaneCenter(1), 100, 50, 80, "blue");
   car.draw(context);
   global["car"] = car;
 }
@@ -50,18 +53,27 @@ function initRoad() {
   global["road"] = road;
 }
 
+function initTraffic(total: number = 1) {
+  const { road } = global;
+  if (!road) return;
+  for (let i = 0; i < total; i++) {
+    traffic.push(new Car(road.getLaneCenter(1), -200, 50, 80, "yellow", true));
+  }
+}
+
 function animate() {
   const { canvas, context, road, car } = global;
   if (!canvas || !context || !road || !car) return;
   canvas.height = window.innerHeight;
 
+  traffic.forEach((c) => c.update(road.borders));
+  car.update(road.borders, traffic);
+
   context.save();
   context.translate(0, -car.y + canvas.height * 0.7);
-
+  traffic.forEach((c) => c.draw(context));
   road.draw(context);
   car.draw(context);
-  car.update(road.borders);
-
   context.restore();
 
   requestAnimationFrame(animate);

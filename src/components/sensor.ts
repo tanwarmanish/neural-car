@@ -12,11 +12,11 @@ export class Sensor {
     this.car = car;
   }
 
-  update(roadBorders: number[]) {
+  update(roadBorders: number[], traffic: any[]) {
     this.#castRays();
     this.readings = [];
     for (let ray of this.rays) {
-      this.readings.push(this.#getReading(ray, roadBorders));
+      this.readings.push(this.#getReading(ray, roadBorders, traffic));
     }
   }
 
@@ -38,7 +38,7 @@ export class Sensor {
     }
   }
 
-  #getReading(ray: any[], roadBorders: any[]) {
+  #getReading(ray: any[], roadBorders: any[], traffic: any[]) {
     // bind points of contact i.e. intersection of two lines
     let touches: any[] = [];
     for (let border of roadBorders) {
@@ -46,6 +46,18 @@ export class Sensor {
       if (touch) touches.push(touch);
     }
 
+    for (let i = 0; i < traffic.length; i++) {
+      const poly = traffic[i].polygon;
+      for (let j = 0; j < poly.length; j++) {
+        const value = getIntersection(
+          ray[0],
+          ray[1],
+          poly[j],
+          poly[(j + 1) % poly.length]
+        );
+        value && touches.push(value);
+      }
+    }
     if (touches.length == 0) return null;
     const offsets = touches.map((e) => e[2]);
     const minOffset = Math.min(...offsets);
